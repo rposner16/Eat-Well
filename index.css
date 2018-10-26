@@ -1,0 +1,21 @@
+* {
+    box-sizing: border-box;
+}
+
+body, .submit {
+    font-family: 'Raleway', sans-serif;
+}
+
+.centered {
+    text-align: center;
+}
+
+.submit {
+    padding: 10px;
+    font-size: 20px;
+    margin: 10px;
+}
+
+.inline {
+    display: inline;
+}
