@@ -2,8 +2,53 @@
     box-sizing: border-box;
 }
 
+html {
+    background: url(https://www.rexdixon.com/assets/upload/2017/12/best-wooden-spoon-september-2018-buyers-guide-and-reviews.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+header {
+    background-color: indianred;
+    padding: 5px;
+}
+
+body {
+    margin: 0px;
+    height: 100%;
+}
+
+.background-image {
+    min-height: 100%;
+    min-width: 1024px;
+    width: 100%;
+    height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
 body, .submit {
     font-family: 'Raleway', sans-serif;
+}
+
+.app-name {
+    padding-left: 10px;
+}
+
+.link {
+    display: block;
+}
+
+.search-text, .app-name, .link {
+    color: white;
+    font-weight: bold;
+}
+
+.container {
+    padding: 30px;
 }
 
 .centered {
@@ -11,11 +56,33 @@ body, .submit {
 }
 
 .submit {
-    padding: 10px;
     font-size: 20px;
     margin: 10px;
+    border-radius: 5px;
+}
+
+.large {
+    width: 250px;
+    height: 100px;
+}
+
+.small {
+    width: 100px;
+}
+
+.js-rest-search, .js-recipe-search, .search-container {
+    padding: 10px;
 }
 
 .inline {
     display: inline;
+}
+
+input {
+    border: 1px solid gainsboro;
+}
+
+li {
+    list-style-type: none;
+    padding: 20px;
 }

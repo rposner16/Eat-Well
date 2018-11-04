@@ -13,7 +13,10 @@ function displayRecipes(responseJson) {
     $('.js-error-message').empty();
     $('.js-recipe-results').empty();
     for (let i = 0; i < responseJson.hits.length; i++) {
-        $('.js-recipe-results').append(`<li><a href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a></li>`);
+        $('.js-recipe-results').append(`<li>
+            <img src="${responseJson.hits[i].recipe.image}" alt="${responseJson.hits[i].recipe.label}">
+            <a class="link" href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a>
+        </li>`);
     }
 }
 
@@ -39,19 +42,22 @@ function getRecipes(baseRecUrl, params) {
 function renderRecipeSearch(baseRecUrl) {
     // Clearing start form
     $('.container').empty();
-    $('.container').append(`<h2>Find recipes: </h2>
+    $('.container').append(`<h2 class="search-text">Find recipes: </h2>
     <form class="js-recipe-search">
-        <label for="recipe-term" class="inline">Enter an ingredient or category (i.e. "chicken"): </label>
-        <input type="text" name="recipe-term" id="js-recipe-query" required>
-
-        <label for="max-term">Enter the maximum number of results shown: </label>
-        <input type="number" name="max-term" id="js-max-recipes" value="10">
+        <div class="search-container">
+            <label for="recipe-term" class="inline search-text">Enter an ingredient or category (i.e. "chicken"): </label>
+            <input type="text" name="recipe-term" id="js-recipe-query" required>
+        </div>
+        <div class="search-container">
+            <label for="max-term" class="search-text">Enter the maximum number of results shown: </label>
+            <input type="number" name="max-term" id="js-max-recipes" value="10">
+        </div>
         
-        <button type="submit">Go!</button>
+        <button type="submit" class="small submit">Go!</button>
     </form>
-    <p class="js-error-message"></p>
-    <ul class="js-recipe-results"></ul>
-    <button type="button" class="js-return-start">Return to start page</button>`);
+    <p class="js-error-message search-text"></p>
+    <ul class="js-recipe-results search-text"></ul>
+    <button type="button" class="js-return-start small submit">Return to start page</button>`);
     $('.js-recipe-search').on('submit', function(event) {
         event.preventDefault();
         const recQuery = $('#js-recipe-query').val();
@@ -59,8 +65,8 @@ function renderRecipeSearch(baseRecUrl) {
         const params = {
             q: recQuery,
             // DON'T FORGET TO CHANGE THIS BEFORE COMMITTING
-            app_id: "INSERT EDAMAM APP ID HERE",
-            app_key: "INSERT EDAMAM API KEY HERE",
+            app_id: edamamAppId,
+            app_key: edamamAppKey,
             to: maxRecipes
         };
         getRecipes(baseRecUrl, params);
@@ -75,7 +81,7 @@ function displayRestaurants(responseJson) {
     $('.js-cities').empty();
     $('.js-rest-results').append(`<p>Restaurants in your city: </p>`);
     for (let i = 0; i < responseJson.restaurants.length; i++) {
-        $('.js-rest-results').append(`<li><a href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a></li>`);
+        $('.js-rest-results').append(`<li><a class="link" href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a></li>`);
     }
 }
 
@@ -93,7 +99,7 @@ function getRestaurants(cityId, baseRestUrl, maxRestaurants) {
         method: 'GET',
         headers: {
             // DON'T FORGET TO CHANGE THIS BEFORE COMMITTING
-            'user-key': 'INSERT ZOMATO API KEY HERE'
+            'user-key': zomatoUserKey
         }
     };
     fetch(queryString, init)
@@ -116,18 +122,18 @@ function displayCities(responseJson, baseRestUrl, maxRestaurants) {
     $('.js-rest-results').empty();
     $('.js-cities').empty();
     if (responseJson.location_suggestions.length === 0) {
-        $('.js-cities').append(`<p>Sorry, no cities matching that name were found.  You can try again with a different city.</p>`);
+        $('.js-cities').append(`<p class="search-text">Sorry, no cities matching that name were found.  You can try again with a different city.</p>`);
     }
     else {
         $('.js-cities').append(`<fieldset class="js-city-options">
-        <legend>Choose your city from the list: </legend>
+        <legend class="search-text">Choose your city from the list: </legend>
         </fieldset>`);
         for (let i = 0; i < responseJson.location_suggestions.length; i++) {
             $('.js-city-options').append(`<input type="radio" value="${responseJson.location_suggestions[i].id}" name="city" id="city" required>
-            <label for="city">${responseJson.location_suggestions[i].name}</label>
+            <label for="city" class="search-text">${responseJson.location_suggestions[i].name}</label>
             <br>`);
         }
-        $('.js-cities').append(`<button type="submit" class="submit-city">Submit</button>`);
+        $('.js-cities').append(`<button type="submit" class="small submit">Submit</button>`);
         $('.js-cities').on('submit', function(event) {
             event.preventDefault();
             const selectedCity = $('input:checked');
@@ -146,7 +152,7 @@ function getCityOptions(baseRestUrl, params, maxRestaurants) {
         method: 'GET',
         headers: {
             // DON'T FORGET TO CHANGE THIS BEFORE COMMITTING
-            'user-key': 'INSERT ZOMATO API KEY HERE'
+            'user-key': zomatoUserKey
         }
     };
     fetch(queryString, init)
@@ -166,20 +172,23 @@ function getCityOptions(baseRestUrl, params, maxRestaurants) {
 function renderRestaurantSearch(baseRestUrl) {
     // Clearing start form
     $('.container').empty();
-    $('.container').append(`<h2>Find restaurants: </h2>
+    $('.container').append(`<h2 class="search-text">Find restaurants: </h2>
     <form class="js-rest-search">
-        <label for="city" class="inline">City: </label>
-        <input type="text" name="city" id="js-rest-query">  
+        <div class="search-container">
+            <label for="city" class="inline search-text">City: </label>
+            <input type="text" name="city" id="js-rest-query">  
+        </div>
+        <div class="search-container">
+            <label for="max-restaurants" class="search-text">Enter the maximum number of restaurants shown: </label>
+            <input type="number" name="max-restaurants" id="js-max-rest" value="10">
+        </div>
         
-        <label for="max-restaurants">Enter the maximum number of restaurants shown: </label>
-        <input type="number" name="max-restaurants" id="js-max-rest" value="10">
-        
-        <button type="submit">Go!</button>
+        <button type="submit" class="small submit">Go!</button>
     </form>
-    <p class="js-rest-error-message"></p>
-    <form class="js-cities"></form>
-    <ul class="js-rest-results"></ul>
-    <button type="button" class="js-return-start">Return to start page</button>`);
+    <p class="js-rest-error-message search-text"></p>
+    <form class="js-cities search-text"></form>
+    <ul class="js-rest-results search-text"></ul>
+    <button type="button" class="small submit js-return-start">Return to start page</button>`);
     $('.js-rest-search').on('submit', function(event) {
         event.preventDefault();
         const restQuery = $('#js-rest-query').val();
@@ -197,10 +206,10 @@ function backToStart() {
     $('.js-return-start').on('click', function(event) {
         event.preventDefault();
         $('.container').empty();
-        $('.container').append(`<h2>Find cooking inspiration or explore local restaurants.</h2>
+        $('.container').append(`<h2 class="search-text">Find cooking inspiration or explore local restaurants.</h2>
         <form class="js-opening-form">
-            <button type="button" class="submit js-recipe">Find recipes</button>
-            <button type="button" class="submit js-rest">Find restaurants near me</button>
+            <button type="button" class="large submit js-recipe">Find recipes</button>
+            <button type="button" class="large submit js-rest">Find restaurants near me</button>
         </form>`);
         watchStartForm();
     });
