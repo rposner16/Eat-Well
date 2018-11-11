@@ -42,8 +42,12 @@ body, .submit {
     display: block;
 }
 
-.search-text, .app-name, .link {
+.start-text {
     color: white;
+}
+
+.search-text, .link {
+    color: black;
     font-weight: bold;
 }
 
@@ -62,16 +66,18 @@ body, .submit {
 }
 
 .large {
-    width: 250px;
+    /*width: 250px;*/
     height: 100px;
+    float: none;
 }
 
 .small {
     width: 100px;
 }
 
-.js-rest-search, .js-recipe-search, .search-container {
+.js-rest-search, .js-recipe-search, .search-container, .js-cities {
     padding: 10px;
+    background-color: white;
 }
 
 .inline {
@@ -85,4 +91,13 @@ input {
 li {
     list-style-type: none;
     padding: 20px;
+    background-color: antiquewhite;
+}
+
+img {
+    width: 100%;
+}
+
+.hidden {
+    visibility: hidden;
 }

@@ -1,7 +1,7 @@
 'use strict'
 
 
-// Format query paramters so they work in a url
+// Format query parameters so they work in a url
 function formatQueryParams(params) {
     const queryItems = Object.keys(params).map(key => `${[encodeURIComponent(key)]}=${encodeURIComponent(params[key])}`);
     return queryItems.join('&');
@@ -13,10 +13,20 @@ function displayRecipes(responseJson) {
     $('.js-error-message').empty();
     $('.js-recipe-results').empty();
     for (let i = 0; i < responseJson.hits.length; i++) {
-        $('.js-recipe-results').append(`<li>
-            <img src="${responseJson.hits[i].recipe.image}" alt="${responseJson.hits[i].recipe.label}">
-            <a class="link" href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a>
-        </li>`);
+        if (i%2 === 0) {
+            $('.js-recipe-results').append(`<div class="row js-${i}">
+            </div>`);
+            $(`.js-${i}`).append(`<li class="col-6">
+                <img src="${responseJson.hits[i].recipe.image}" alt="${responseJson.hits[i].recipe.label}">
+                <a class="link" href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a>
+             </li>`);
+        }
+        else {
+           $(`.js-${i - 1}`).append(`<li class="col-6">
+                <img src="${responseJson.hits[i].recipe.image}" alt="${responseJson.hits[i].recipe.label}">
+                <a class="link" href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a>
+            </li>`) 
+        }
     }
 }
 
@@ -42,18 +52,25 @@ function getRecipes(baseRecUrl, params) {
 function renderRecipeSearch(baseRecUrl) {
     // Clearing start form
     $('.container').empty();
-    $('.container').append(`<h2 class="search-text">Find recipes: </h2>
+    $('.container').append(`
     <form class="js-recipe-search">
-        <div class="search-container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="search-text">Find recipes: </h2>
+            </div>
+        </div>
+        <div class="search-container row">
             <label for="recipe-term" class="inline search-text">Enter an ingredient or category (i.e. "chicken"): </label>
             <input type="text" name="recipe-term" id="js-recipe-query" required>
         </div>
-        <div class="search-container">
+        <div class="search-container row">
             <label for="max-term" class="search-text">Enter the maximum number of results shown: </label>
             <input type="number" name="max-term" id="js-max-recipes" value="10">
         </div>
         
-        <button type="submit" class="small submit">Go!</button>
+        <div class="row">
+            <button type="submit" class="small submit">Go!</button>
+        </div>
     </form>
     <p class="js-error-message search-text"></p>
     <ul class="js-recipe-results search-text"></ul>
@@ -76,12 +93,32 @@ function renderRecipeSearch(baseRecUrl) {
 
 // Displays list of links to restaurants based on user's city
 function displayRestaurants(responseJson) {
+    console.log(responseJson);
     $('.js-rest-error-message').empty();
     $('.js-rest-results').empty();
     $('.js-cities').empty();
     $('.js-rest-results').append(`<p>Restaurants in your city: </p>`);
     for (let i = 0; i < responseJson.restaurants.length; i++) {
-        $('.js-rest-results').append(`<li><a class="link" href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a></li>`);
+        let imgString = "";
+        if (responseJson.restaurants[i].restaurant.featured_image != "") {
+            imgString = `src="${responseJson.restaurants[i].restaurant.featured_image}" alt="Image of ${responseJson.restaurants[i].restaurant.name}"`; 
+        }
+        else {
+            imgString = 'src="https://us.123rf.com/450wm/chepko/chepko1204/chepko120400052/13117273-silverware.jpg?ver=6" alt="Closeup of a fork and spoon."';
+        }
+        if (i%2 === 0) {
+            $('.js-rest-results').append(`<div class="row js-rest-${i}"></div>`);
+            $(`.js-rest-${i}`).append(`<li class="col-6">
+                <img ${imgString}>
+                <a class="link" href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a>
+            </li>`);
+        }
+        else {
+            $(`.js-rest-${i - 1}`).append(`<li class="col-6">
+                <img ${imgString}>
+                <a class="link" href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a>
+            </li>`);
+        }
     }
 }
 
@@ -121,6 +158,7 @@ function displayCities(responseJson, baseRestUrl, maxRestaurants) {
     $('.js-rest-error-message').empty();
     $('.js-rest-results').empty();
     $('.js-cities').empty();
+    $('.js-cities').removeClass('hidden');
     if (responseJson.location_suggestions.length === 0) {
         $('.js-cities').append(`<p class="search-text">Sorry, no cities matching that name were found.  You can try again with a different city.</p>`);
     }
@@ -129,15 +167,28 @@ function displayCities(responseJson, baseRestUrl, maxRestaurants) {
         <legend class="search-text">Choose your city from the list: </legend>
         </fieldset>`);
         for (let i = 0; i < responseJson.location_suggestions.length; i++) {
-            $('.js-city-options').append(`<input type="radio" value="${responseJson.location_suggestions[i].id}" name="city" id="city" required>
-            <label for="city" class="search-text">${responseJson.location_suggestions[i].name}</label>
-            <br>`);
+            if (i%2 === 0) {
+                console.log('here');
+                $('.js-city-options').append(`<div class="row js-city-${i}">
+                </div>`);
+                $(`.js-city-${i}`).append(`<div class="col-6">
+                    <input type="radio" value="${responseJson.location_suggestions[i].id}" name="city" id="city" required>
+                    <label for="city" class="search-text">${responseJson.location_suggestions[i].name}</label>
+                </div>`);
+            }
+            else {
+                $(`.js-city-${i - 1}`).append(`<div class="col-6">
+                    <input type="radio" value="${responseJson.location_suggestions[i].id}" name="city" id="city" required>
+                    <label for="city" class="search-text">${responseJson.location_suggestions[i].name}</label>
+                </div>`)
+            }
         }
         $('.js-cities').append(`<button type="submit" class="small submit">Submit</button>`);
         $('.js-cities').on('submit', function(event) {
             event.preventDefault();
             const selectedCity = $('input:checked');
             const cityId = selectedCity.val();
+            $('.js-cities').addClass('hidden');
             getRestaurants(cityId, baseRestUrl, maxRestaurants);
         });
     }
@@ -172,21 +223,26 @@ function getCityOptions(baseRestUrl, params, maxRestaurants) {
 function renderRestaurantSearch(baseRestUrl) {
     // Clearing start form
     $('.container').empty();
-    $('.container').append(`<h2 class="search-text">Find restaurants: </h2>
+    $('.container').append(`
     <form class="js-rest-search">
-        <div class="search-container">
+        <div class="row">
+            <h2 class="search-text col-12">Find restaurants: </h2>
+        </div>
+        <div class="search-container row">
             <label for="city" class="inline search-text">City: </label>
             <input type="text" name="city" id="js-rest-query">  
         </div>
-        <div class="search-container">
+        <div class="search-container row">
             <label for="max-restaurants" class="search-text">Enter the maximum number of restaurants shown: </label>
             <input type="number" name="max-restaurants" id="js-max-rest" value="10">
         </div>
         
-        <button type="submit" class="small submit">Go!</button>
+        <div class="row">
+            <button type="submit" class="small submit">Go!</button>
+        </div>
     </form>
     <p class="js-rest-error-message search-text"></p>
-    <form class="js-cities search-text"></form>
+    <form class="js-cities search-text hidden"></form>
     <ul class="js-rest-results search-text"></ul>
     <button type="button" class="small submit js-return-start">Return to start page</button>`);
     $('.js-rest-search').on('submit', function(event) {
@@ -206,11 +262,18 @@ function backToStart() {
     $('.js-return-start').on('click', function(event) {
         event.preventDefault();
         $('.container').empty();
-        $('.container').append(`<h2 class="search-text">Find cooking inspiration or explore local restaurants.</h2>
-        <form class="js-opening-form">
-            <button type="button" class="large submit js-recipe">Find recipes</button>
-            <button type="button" class="large submit js-rest">Find restaurants near me</button>
-        </form>`);
+        $('.container').append(`<div class="row">
+            <div class="col-12">
+                <h2 class="start-text">Find cooking inspiration or explore local restaurants.</h2>
+            </div>
+        </div>
+        <div class="row">
+            <form class="js-opening-form">
+                <button type="button" class="large col-6 submit js-recipe">Find recipes</button>
+
+                <button type="button" class="large col-6 submit js-rest">Find restaurants near me</button>
+            </form>
+        </div>`);
         watchStartForm();
     });
 }
