@@ -16,16 +16,16 @@ function displayRecipes(responseJson) {
         if (i%2 === 0) {
             $('.js-recipe-results').append(`<div class="row js-${i}">
             </div>`);
-            $(`.js-${i}`).append(`<li class="col-6">
+            $(`.js-${i}`).append(`<div class="col-6">
                 <img src="${responseJson.hits[i].recipe.image}" alt="${responseJson.hits[i].recipe.label}">
                 <a class="link" href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a>
-             </li>`);
+             </div>`);
         }
         else {
-           $(`.js-${i - 1}`).append(`<li class="col-6">
+           $(`.js-${i - 1}`).append(`<div class="col-6">
                 <img src="${responseJson.hits[i].recipe.image}" alt="${responseJson.hits[i].recipe.label}">
                 <a class="link" href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a>
-            </li>`) 
+            </div>`) 
         }
     }
 }
@@ -73,8 +73,7 @@ function renderRecipeSearch(baseRecUrl) {
         </div>
     </form>
     <p class="js-error-message search-text"></p>
-    <ul class="js-recipe-results search-text"></ul>
-    <button type="button" class="js-return-start small submit">Return to start page</button>`);
+    <div class="js-recipe-results search-text"></div>`);
     $('.js-recipe-search').on('submit', function(event) {
         event.preventDefault();
         const recQuery = $('#js-recipe-query').val();
@@ -97,7 +96,7 @@ function displayRestaurants(responseJson) {
     $('.js-rest-error-message').empty();
     $('.js-rest-results').empty();
     $('.js-cities').empty();
-    $('.js-rest-results').append(`<p>Restaurants in your city: </p>`);
+    $('.js-rest-results').append(`<p class="rest-result-intro">Restaurants in your city: </p>`);
     for (let i = 0; i < responseJson.restaurants.length; i++) {
         let imgString = "";
         if (responseJson.restaurants[i].restaurant.featured_image != "") {
@@ -108,16 +107,22 @@ function displayRestaurants(responseJson) {
         }
         if (i%2 === 0) {
             $('.js-rest-results').append(`<div class="row js-rest-${i}"></div>`);
-            $(`.js-rest-${i}`).append(`<li class="col-6">
-                <img ${imgString}>
+            $(`.js-rest-${i}`).append(`<div class="col-6">
+                <div class="rest-img-container">
+                    <img class="rest-img" ${imgString}>
+                </div>
                 <a class="link" href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a>
-            </li>`);
+                <p>Cuisine: ${responseJson.restaurants[i].restaurant.cuisines} • Neighborhood: ${responseJson.restaurants[i].restaurant.location.locality} • Rating: ${responseJson.restaurants[i].restaurant.user_rating.rating_text}</p>
+            </div>`);
         }
         else {
-            $(`.js-rest-${i - 1}`).append(`<li class="col-6">
-                <img ${imgString}>
+            $(`.js-rest-${i - 1}`).append(`<div class="col-6">
+                <div class="rest-img-container">
+                    <img class="rest-img" ${imgString}>
+                </div>
                 <a class="link" href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a>
-            </li>`);
+                <p>Cuisine: ${responseJson.restaurants[i].restaurant.cuisines} • Neighborhood: ${responseJson.restaurants[i].restaurant.location.locality} • Rating: ${responseJson.restaurants[i].restaurant.user_rating.rating_text}</p>
+            </div>`);
         }
     }
 }
@@ -171,13 +176,13 @@ function displayCities(responseJson, baseRestUrl, maxRestaurants) {
                 console.log('here');
                 $('.js-city-options').append(`<div class="row js-city-${i}">
                 </div>`);
-                $(`.js-city-${i}`).append(`<div class="col-6">
+                $(`.js-city-${i}`).append(`<div class="col-6 city-option">
                     <input type="radio" value="${responseJson.location_suggestions[i].id}" name="city" id="city" required>
                     <label for="city" class="search-text">${responseJson.location_suggestions[i].name}</label>
                 </div>`);
             }
             else {
-                $(`.js-city-${i - 1}`).append(`<div class="col-6">
+                $(`.js-city-${i - 1}`).append(`<div class="col-6 city-option">
                     <input type="radio" value="${responseJson.location_suggestions[i].id}" name="city" id="city" required>
                     <label for="city" class="search-text">${responseJson.location_suggestions[i].name}</label>
                 </div>`)
@@ -243,8 +248,7 @@ function renderRestaurantSearch(baseRestUrl) {
     </form>
     <p class="js-rest-error-message search-text"></p>
     <form class="js-cities search-text hidden"></form>
-    <ul class="js-rest-results search-text"></ul>
-    <button type="button" class="small submit js-return-start">Return to start page</button>`);
+    <div class="js-rest-results search-text"></div>`);
     $('.js-rest-search').on('submit', function(event) {
         event.preventDefault();
         const restQuery = $('#js-rest-query').val();

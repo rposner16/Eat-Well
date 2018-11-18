@@ -42,7 +42,15 @@ body, .submit {
     display: block;
 }
 
-.start-text {
+.js-return-start, button {
+    cursor: pointer;
+}
+
+button {
+    background-color: white;
+}
+
+.start-text, .rest-result-intro {
     color: white;
 }
 
@@ -53,6 +61,7 @@ body, .submit {
 
 .container {
     padding: 30px;
+    padding-top: 100px;
 }
 
 .centered {
@@ -88,16 +97,25 @@ input {
     border: 1px solid gainsboro;
 }
 
-li {
-    list-style-type: none;
-    padding: 20px;
-    background-color: antiquewhite;
-}
-
 img {
     width: 100%;
 }
 
+.rest-img {
+    height: 200px;
+}
+
 .hidden {
     visibility: hidden;
+}
+
+.city-option {
+    padding: 5px;
+    text-align: left;
+}
+
+.rest-img-container {
+    height: 200px;
+    width: 100%;
+    overflow: hidden;
 }
