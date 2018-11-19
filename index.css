@@ -12,7 +12,6 @@ html {
 
 header {
     background-color: indianred;
-    padding: 5px;
 }
 
 body {
@@ -23,11 +22,14 @@ body {
 .background-image {
     min-height: 100%;
     min-width: 1024px;
-    width: 100%;
     height: auto;
     position: fixed;
     top: 0;
     left: 0;
+}
+
+.background-image, img, .rest-img-container {
+    width: 100%;
 }
 
 body, .submit {
@@ -36,7 +38,6 @@ body, .submit {
 
 .app-name {
     padding-left: 10px;
-    color: white;
 }
 
 .link {
@@ -47,17 +48,16 @@ body, .submit {
     cursor: pointer;
 }
 
-button {
-    background-color: white;
-}
-
 .rest-result-intro, .try-again-message {
     font-size: 22px;
 }
 
 .start-text, .rest-result-intro, .try-again-message {
-    color: white;
     text-shadow: 1px 1px 1px black;
+}
+
+.start-text, .rest-result-intro, .try-again-message, .app-name {
+    color: white;
 }
 
 .search-text, .link {
@@ -77,20 +77,17 @@ button {
 .submit {
     font-size: 20px;
     margin: 10px;
-    border-radius: 5px;
 }
 
-.js-change-num {
-    padding: 10px;
+.submit, .change-num-button {
+    border-radius: 5px;
 }
 
 .change-num-button {
     font-size: 12px;
-    border-radius: 5px;
 }
 
 .large {
-    /*width: 250px;*/
     height: 100px;
     float: none;
 }
@@ -99,9 +96,12 @@ button {
     width: 100px;
 }
 
-.js-rest-search, .js-recipe-search, .search-container, .js-cities {
-    padding: 10px;
+.js-rest-search, .js-recipe-search, .search-container, .js-cities, button {
     background-color: white;
+}
+
+.js-rest-search, .js-recipe-search, .search-container, .js-cities, .js-change-num {
+    padding: 10px;
 }
 
 .inline {
@@ -112,27 +112,27 @@ input {
     border: 1px solid gainsboro;
 }
 
-img {
-    width: 100%;
+.rest-img {
+    width: auto;
 }
 
-.rest-img {
+.rest-img, .rest-img-container {
     height: 200px;
-    width: auto;
 }
 
 .hidden {
     visibility: hidden;
 }
 
-.city-option {
+header, .city-option {
     padding: 5px;
+}
+
+.city-option {
     text-align: left;
 }
 
 .rest-img-container {
-    height: 200px;
-    width: 100%;
     overflow: hidden;
 }
 

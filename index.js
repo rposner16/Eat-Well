@@ -7,9 +7,9 @@ function formatQueryParams(params) {
     return queryItems.join('&');
 }
 
-// Display recipes on the page based on user query
+// Display recipes on the page based on user query. Shows an image, link, and source
+// for each recipe.
 function displayRecipes(responseJson) {
-    console.log(responseJson);
     $('.js-error-message').empty();
     $('.js-recipe-results').empty();
     if (responseJson.hits.length <= 0) {
@@ -17,6 +17,7 @@ function displayRecipes(responseJson) {
             <p class="try-again-message">Sorry, we couldn't find results matching your query- please try again.</p>
         </div>`);
     }
+    // If/else statements determine placement of recipes for responsive design
     for (let i = 0; i < responseJson.hits.length; i++) {
         if (i%2 === 0) {
             $('.js-recipe-results').append(`<div class="row js-${i}">
@@ -41,7 +42,6 @@ function displayRecipes(responseJson) {
 function getRecipes(baseRecUrl, params) {
     let queryString = formatQueryParams(params);
     queryString = baseRecUrl + "?" + queryString;
-    console.log(queryString);
     fetch(queryString)
     .then(response => {
         if (response.ok) {
@@ -57,7 +57,6 @@ function getRecipes(baseRecUrl, params) {
 
 // Displays search bar for recipes on the page, calls getRecipes
 function renderRecipeSearch(baseRecUrl) {
-    // Clearing start form
     $('.container').empty();
     $('.container').append(`
     <form class="js-recipe-search">
@@ -87,7 +86,7 @@ function renderRecipeSearch(baseRecUrl) {
         const maxRecipes = $('#js-max-recipes').val();
         const params = {
             q: recQuery,
-            // DON'T FORGET TO CHANGE THIS BEFORE COMMITTING
+            // edamamAppId and edamamAppKey are variables in apiKeys.js
             app_id: edamamAppId,
             app_key: edamamAppKey,
             to: maxRecipes
@@ -97,9 +96,8 @@ function renderRecipeSearch(baseRecUrl) {
     backToStart();
 }
 
-// Displays list of links to restaurants based on user's city
+// Displays list of links to restaurants based on user's chosen city
 function displayRestaurants(responseJson, cityId, baseRestUrl, maxRestaurants) {
-    console.log(responseJson);
     $('.js-rest-error-message').empty();
     $('.js-rest-results').empty();
     $('.js-cities').empty();
@@ -110,6 +108,7 @@ function displayRestaurants(responseJson, cityId, baseRestUrl, maxRestaurants) {
         <button type="submit" class="small change-num-button">Submit</button>
     </form>`);
     for (let i = 0; i < responseJson.restaurants.length; i++) {
+        // If the restaurant doesn't provide an image, insert a stock photo
         let imgString = "";
         if (responseJson.restaurants[i].restaurant.featured_image != "") {
             imgString = `src="${responseJson.restaurants[i].restaurant.featured_image}" alt="Image of ${responseJson.restaurants[i].restaurant.name}"`; 
@@ -117,6 +116,7 @@ function displayRestaurants(responseJson, cityId, baseRestUrl, maxRestaurants) {
         else {
             imgString = 'src="https://us.123rf.com/450wm/chepko/chepko1204/chepko120400052/13117273-silverware.jpg?ver=6" alt="Closeup of a fork and spoon."';
         }
+        // If/else here determines placement for responsive design
         if (i%2 === 0) {
             $('.js-rest-results').append(`<div class="row js-rest-${i}"></div>`);
             $(`.js-rest-${i}`).append(`<div class="col-6">
@@ -141,6 +141,7 @@ function displayRestaurants(responseJson, cityId, baseRestUrl, maxRestaurants) {
             </div>`);
         }
     }
+    // Call getRestaurants again if the user changes the number of restaurants they want shown
     $('.js-change-num').on('submit', function(event) {
         event.preventDefault();
         maxRestaurants = $('#js-max-rest').val();
@@ -157,11 +158,10 @@ function getRestaurants(cityId, baseRestUrl, maxRestaurants) {
     };
     let queryString = formatQueryParams(params);
     queryString = baseRestUrl + 'search?' + queryString;
-    console.log(queryString);
     const init = {
         method: 'GET',
         headers: {
-            // DON'T FORGET TO CHANGE THIS BEFORE COMMITTING
+            // zomatoUserKey is a variable in apiKeys.js
             'user-key': zomatoUserKey
         }
     };
@@ -180,11 +180,11 @@ function getRestaurants(cityId, baseRestUrl, maxRestaurants) {
 
 // Displays a list of cities for the user to choose from, calls getRestaurants after getting user input
 function displayCities(responseJson, baseRestUrl) {
-    console.log(responseJson);
     $('.js-rest-error-message').empty();
     $('.js-rest-results').empty();
     $('.js-cities').empty();
     $('.js-cities').removeClass('hidden');
+    // Accounting for case where the user misspells something or the city isn't in the database
     if (responseJson.location_suggestions.length === 0) {
         $('.js-cities').append(`<p class="search-text">Sorry, no cities matching that name were found.  You can try again with a different city.</p>`);
     }
@@ -194,7 +194,6 @@ function displayCities(responseJson, baseRestUrl) {
         </fieldset>`);
         for (let i = 0; i < responseJson.location_suggestions.length; i++) {
             if (i%2 === 0) {
-                console.log('here');
                 $('.js-city-options').append(`<div class="row js-city-${i}">
                 </div>`);
                 $(`.js-city-${i}`).append(`<div class="col-6 city-option">
@@ -214,6 +213,7 @@ function displayCities(responseJson, baseRestUrl) {
             <input type="number" name="max-restaurants" id="js-max-rest" value="10">
         </div>
         <button type="submit" class="small submit">Submit</button>`);
+        // Hide city-choosing form and call getRestaurants
         $('.js-cities').on('submit', function(event) {
             event.preventDefault();
             const selectedCity = $('input:checked');
@@ -229,11 +229,10 @@ function displayCities(responseJson, baseRestUrl) {
 function getCityOptions(baseRestUrl, params) {
     let queryString = formatQueryParams(params);
     queryString = baseRestUrl + "cities?" + queryString;
-    console.log(queryString);
     const init = {
         method: 'GET',
         headers: {
-            // DON'T FORGET TO CHANGE THIS BEFORE COMMITTING
+            // zomatoUserKey is a variable in apiKeys.js
             'user-key': zomatoUserKey
         }
     };
@@ -252,7 +251,6 @@ function getCityOptions(baseRestUrl, params) {
 
 // Displays initial city search bar on the page, calls getCityOptions
 function renderRestaurantSearch(baseRestUrl) {
-    // Clearing start form
     $('.container').empty();
     $('.container').append(`
     <form class="js-rest-search">
@@ -279,6 +277,7 @@ function renderRestaurantSearch(baseRestUrl) {
         };
         getCityOptions(baseRestUrl, params);
     });
+    // Called in case the user wants to go back to the start page
     backToStart();
 }
 
