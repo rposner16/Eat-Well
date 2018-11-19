@@ -293,9 +293,9 @@ function backToStart() {
         </div>
         <div class="row">
             <form class="js-opening-form">
-                <button type="button" class="large col-6 submit js-recipe" aria-controls="js-recipe-search">Find recipes</button>
+                <button type="button" class="large col-6 submit js-recipe">Find recipes</button>
 
-                <button type="button" class="large col-6 submit js-rest" aria-controls="js-rest-search">Find restaurants near me</button>
+                <button type="button" class="large col-6 submit js-rest">Find restaurants near me</button>
             </form>
         </div>`);
         watchStartForm();
