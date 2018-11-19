@@ -59,7 +59,7 @@ function getRecipes(baseRecUrl, params) {
 function renderRecipeSearch(baseRecUrl) {
     $('.container').empty();
     $('.container').append(`
-    <form class="js-recipe-search">
+    <form class="js-recipe-search" aria-controls="js-recipe-results" aria-live="polite">
         <div class="row">
             <div class="col-12">
                 <h2 class="search-text">Find recipes: </h2>
@@ -79,7 +79,7 @@ function renderRecipeSearch(baseRecUrl) {
         </div>
     </form>
     <p class="js-error-message search-text"></p>
-    <div class="js-recipe-results search-text"></div>`);
+    <div class="js-recipe-results search-text" aria-live="polite"></div>`);
     $('.js-recipe-search').on('submit', function(event) {
         event.preventDefault();
         const recQuery = $('#js-recipe-query').val();
@@ -253,7 +253,7 @@ function getCityOptions(baseRestUrl, params) {
 function renderRestaurantSearch(baseRestUrl) {
     $('.container').empty();
     $('.container').append(`
-    <form class="js-rest-search">
+    <form class="js-rest-search" aria-controls="js-cities" aria-live="polite">
         <div class="row">
             <h2 class="search-text col-12">Find restaurants: </h2>
         </div>
@@ -267,8 +267,8 @@ function renderRestaurantSearch(baseRestUrl) {
         </div>
     </form>
     <p class="js-rest-error-message search-text"></p>
-    <form class="js-cities search-text hidden"></form>
-    <div class="js-rest-results search-text"></div>`);
+    <form class="js-cities search-text hidden" aria-live="polite" aria-controls="js-rest-results"></form>
+    <section role="region" class="js-rest-results search-text" aria-live="polite"></section>`);
     $('.js-rest-search').on('submit', function(event) {
         event.preventDefault();
         const restQuery = $('#js-rest-query').val();
@@ -293,9 +293,9 @@ function backToStart() {
         </div>
         <div class="row">
             <form class="js-opening-form">
-                <button type="button" class="large col-6 submit js-recipe">Find recipes</button>
+                <button type="button" class="large col-6 submit js-recipe" aria-controls="js-recipe-search">Find recipes</button>
 
-                <button type="button" class="large col-6 submit js-rest">Find restaurants near me</button>
+                <button type="button" class="large col-6 submit js-rest" aria-controls="js-rest-search">Find restaurants near me</button>
             </form>
         </div>`);
         watchStartForm();
