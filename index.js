@@ -12,19 +12,26 @@ function displayRecipes(responseJson) {
     console.log(responseJson);
     $('.js-error-message').empty();
     $('.js-recipe-results').empty();
+    if (responseJson.hits.length <= 0) {
+        $('.js-recipe-results').append(`<div class="row">
+            <p class="try-again-message">Sorry, we couldn't find results matching your query- please try again.</p>
+        </div>`);
+    }
     for (let i = 0; i < responseJson.hits.length; i++) {
         if (i%2 === 0) {
             $('.js-recipe-results').append(`<div class="row js-${i}">
             </div>`);
             $(`.js-${i}`).append(`<div class="col-6">
                 <img src="${responseJson.hits[i].recipe.image}" alt="${responseJson.hits[i].recipe.label}">
-                <a class="link" href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a>
+                <a class="link" href="${responseJson.hits[i].recipe.url}" target="_blank">${responseJson.hits[i].recipe.label}</a>
+                <p>Source: ${responseJson.hits[i].recipe.source}</p>
              </div>`);
         }
         else {
            $(`.js-${i - 1}`).append(`<div class="col-6">
                 <img src="${responseJson.hits[i].recipe.image}" alt="${responseJson.hits[i].recipe.label}">
-                <a class="link" href="${responseJson.hits[i].recipe.url}">${responseJson.hits[i].recipe.label}</a>
+                <a class="link" href="${responseJson.hits[i].recipe.url}" target="_blank">${responseJson.hits[i].recipe.label}</a>
+                <p>Source: ${responseJson.hits[i].recipe.source}</p>
             </div>`) 
         }
     }
@@ -64,7 +71,7 @@ function renderRecipeSearch(baseRecUrl) {
             <input type="text" name="recipe-term" id="js-recipe-query" required>
         </div>
         <div class="search-container row">
-            <label for="max-term" class="search-text">Enter the maximum number of results shown: </label>
+            <label for="max-term" class="search-text">Number of results: </label>
             <input type="number" name="max-term" id="js-max-recipes" value="10">
         </div>
         
@@ -91,12 +98,17 @@ function renderRecipeSearch(baseRecUrl) {
 }
 
 // Displays list of links to restaurants based on user's city
-function displayRestaurants(responseJson) {
+function displayRestaurants(responseJson, cityId, baseRestUrl, maxRestaurants) {
     console.log(responseJson);
     $('.js-rest-error-message').empty();
     $('.js-rest-results').empty();
     $('.js-cities').empty();
-    $('.js-rest-results').append(`<p class="rest-result-intro">Restaurants in your city: </p>`);
+    $('.js-rest-results').append(`<p class="rest-result-intro">Restaurants in your city: </p>
+    <form class="row js-change-num">
+        <label for="max-restaurants" class="start-text">Number of restaurants shown: </label>
+        <input type="number" name="max-restaurants" id="js-max-rest" value="10">
+        <button type="submit" class="small change-num-button">Submit</button>
+    </form>`);
     for (let i = 0; i < responseJson.restaurants.length; i++) {
         let imgString = "";
         if (responseJson.restaurants[i].restaurant.featured_image != "") {
@@ -111,8 +123,10 @@ function displayRestaurants(responseJson) {
                 <div class="rest-img-container">
                     <img class="rest-img" ${imgString}>
                 </div>
-                <a class="link" href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a>
-                <p>Cuisine: ${responseJson.restaurants[i].restaurant.cuisines} • Neighborhood: ${responseJson.restaurants[i].restaurant.location.locality} • Rating: ${responseJson.restaurants[i].restaurant.user_rating.rating_text}</p>
+                <a class="link" href="${responseJson.restaurants[i].restaurant.url}" target="_blank">${responseJson.restaurants[i].restaurant.name}</a>
+                <p>Cuisine: ${responseJson.restaurants[i].restaurant.cuisines}</p>
+                <p>Neighborhood: ${responseJson.restaurants[i].restaurant.location.locality}</p>
+                <p>Rating: ${responseJson.restaurants[i].restaurant.user_rating.rating_text}</p>
             </div>`);
         }
         else {
@@ -120,11 +134,18 @@ function displayRestaurants(responseJson) {
                 <div class="rest-img-container">
                     <img class="rest-img" ${imgString}>
                 </div>
-                <a class="link" href="${responseJson.restaurants[i].restaurant.url}">${responseJson.restaurants[i].restaurant.name}</a>
-                <p>Cuisine: ${responseJson.restaurants[i].restaurant.cuisines} • Neighborhood: ${responseJson.restaurants[i].restaurant.location.locality} • Rating: ${responseJson.restaurants[i].restaurant.user_rating.rating_text}</p>
+                <a class="link" href="${responseJson.restaurants[i].restaurant.url}" target="_blank">${responseJson.restaurants[i].restaurant.name}</a>
+                <p>Cuisine: ${responseJson.restaurants[i].restaurant.cuisines}</p>
+                <p>Neighborhood: ${responseJson.restaurants[i].restaurant.location.locality}</p>
+                <p>Rating: ${responseJson.restaurants[i].restaurant.user_rating.rating_text}</p>
             </div>`);
         }
     }
+    $('.js-change-num').on('submit', function(event) {
+        event.preventDefault();
+        maxRestaurants = $('#js-max-rest').val();
+        getRestaurants(cityId, baseRestUrl, maxRestaurants);
+    })
 }
 
 // Gets a list of restaurants in the user's city from the Zomato API, calls displayRestaurants if successful 
@@ -151,14 +172,14 @@ function getRestaurants(cityId, baseRestUrl, maxRestaurants) {
         }
         throw new Error(response.statusText);
     })
-    .then(responseJson => displayRestaurants(responseJson))
+    .then(responseJson => displayRestaurants(responseJson, cityId, baseRestUrl, maxRestaurants))
     .catch(err => {
         $('.js-rest-error-message').text(`Something went wrong: ${err.message}`);
     });
 }
 
 // Displays a list of cities for the user to choose from, calls getRestaurants after getting user input
-function displayCities(responseJson, baseRestUrl, maxRestaurants) {
+function displayCities(responseJson, baseRestUrl) {
     console.log(responseJson);
     $('.js-rest-error-message').empty();
     $('.js-rest-results').empty();
@@ -188,11 +209,16 @@ function displayCities(responseJson, baseRestUrl, maxRestaurants) {
                 </div>`)
             }
         }
-        $('.js-cities').append(`<button type="submit" class="small submit">Submit</button>`);
+        $('.js-cities').append(`<div class="row pad-top-10">
+            <label for="max-restaurants" class="search-text">Number of restaurants shown: </label>
+            <input type="number" name="max-restaurants" id="js-max-rest" value="10">
+        </div>
+        <button type="submit" class="small submit">Submit</button>`);
         $('.js-cities').on('submit', function(event) {
             event.preventDefault();
             const selectedCity = $('input:checked');
             const cityId = selectedCity.val();
+            const maxRestaurants = $('#js-max-rest').val();
             $('.js-cities').addClass('hidden');
             getRestaurants(cityId, baseRestUrl, maxRestaurants);
         });
@@ -200,7 +226,7 @@ function displayCities(responseJson, baseRestUrl, maxRestaurants) {
 }
 
 // Gets a list of cities from Zomato API for user to choose from based on what they enter, calls displayCities
-function getCityOptions(baseRestUrl, params, maxRestaurants) {
+function getCityOptions(baseRestUrl, params) {
     let queryString = formatQueryParams(params);
     queryString = baseRestUrl + "cities?" + queryString;
     console.log(queryString);
@@ -218,7 +244,7 @@ function getCityOptions(baseRestUrl, params, maxRestaurants) {
         }
         throw new Error(response.statusText);
     })
-    .then(responseJson => displayCities(responseJson, baseRestUrl, maxRestaurants))
+    .then(responseJson => displayCities(responseJson, baseRestUrl))
     .catch(err => {
         $('.js-rest-error-message').text(`Something went wrong: ${err.message}`);
     });
@@ -237,10 +263,6 @@ function renderRestaurantSearch(baseRestUrl) {
             <label for="city" class="inline search-text">City: </label>
             <input type="text" name="city" id="js-rest-query">  
         </div>
-        <div class="search-container row">
-            <label for="max-restaurants" class="search-text">Enter the maximum number of restaurants shown: </label>
-            <input type="number" name="max-restaurants" id="js-max-rest" value="10">
-        </div>
         
         <div class="row">
             <button type="submit" class="small submit">Go!</button>
@@ -255,8 +277,7 @@ function renderRestaurantSearch(baseRestUrl) {
         const params = {
             q: restQuery
         };
-        const maxRestaurants = $('#js-max-rest').val();
-        getCityOptions(baseRestUrl, params, maxRestaurants);
+        getCityOptions(baseRestUrl, params);
     });
     backToStart();
 }
